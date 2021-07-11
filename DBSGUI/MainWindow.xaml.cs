@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Oracle.ManagedDataAccess.Client;
 
 namespace DBSGUI
 {
@@ -20,9 +22,47 @@ namespace DBSGUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static string user = "flughafenbase";
+        public static string pwd = "oracle";
+
+        //Set the net service name, Easy Connect, or connect descriptor of the pluggable DB, 
+        // such as "localhost/XEPDB1" for 18c XE or higher
+        public static string db = "<localhost/xe>";
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            string conStringUser = "User Id=" + user + ";Password=" + pwd + ";Data Source=" + db + ";";
+
+            using (OracleConnection con = new OracleConnection(conStringUser))
+            {
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+
+                        con.Open();
+                        Console.WriteLine("Successfully connected to Oracle Database as " + user);
+                        Console.WriteLine();
+
+                        //Retrieve sample data
+                        cmd.CommandText = "SELECT description, done FROM todoitem";
+                        OracleDataReader reader = cmd.ExecuteReader();
+                        while (reader.Read())
+                        {
+                            if (reader.GetBoolean(1))
+                                Console.WriteLine(reader.GetString(0) + " is done.");
+                            else
+                                Console.WriteLine(reader.GetString(0) + " is NOT done.");
+                        }
+
+
+                        reader.Dispose();
+
+                }
+            }
         }
     }
 }
