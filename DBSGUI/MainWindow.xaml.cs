@@ -22,8 +22,8 @@ namespace DBSGUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static string user = "flughafenbase";
-        public static string pwd = "oracle";
+        public static string user = "carhouseuser";
+        public static string pwd = "strongPW123";
 
         //Set the net service name, Easy Connect, or connect descriptor of the pluggable DB, 
         // such as "localhost/XEPDB1" for 18c XE or higher
@@ -33,12 +33,12 @@ namespace DBSGUI
         {
             InitializeComponent();
         }
-
+        
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             string conStringUser = "User Id=" + user + ";Password=" + pwd + ";Data Source=" + db + ";";
 
-            using (OracleConnection con = new OracleConnection(conStringUser))
+            using (OracleConnection con = new OracleConnection("TNS_ADMIN=C:\\Users\\exploFH\\Oracle\\network\\admin;USER ID = CARHOUSEUSER;" + " Password = " + pwd + "; DATA SOURCE = localhost:11521/xe;PERSIST SECURITY INFO=True"))
             {
                 using (OracleCommand cmd = con.CreateCommand())
                 {
@@ -48,7 +48,7 @@ namespace DBSGUI
                         Console.WriteLine();
 
                         //Retrieve sample data
-                        cmd.CommandText = "SELECT description, done FROM todoitem";
+                        cmd.CommandText = "SELECT * FROM Auto";
                         OracleDataReader reader = cmd.ExecuteReader();
                         while (reader.Read())
                         {
